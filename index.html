@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Train Reservation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Train Reservation System</h1>
+        <form id="reservationForm">
+            <input type="text" id="name" placeholder="Your Name" required><br>
+            <input type="text" id="train" placeholder="Train Name/Number" required><br>
+            <input type="date" id="date" required><br>
+            <button type="submit">Reserve</button>
+        </form>
+        <p id="confirmationMsg"></p>
+    </div>
+
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const train = document.getElementById('train').value;
+            const date = document.getElementById('date').value;
+
+            const response = await fetch('/reserve', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, train, date })
+            });
+
+            const result = await response.json();
+            const msgEl = document.getElementById('confirmationMsg');
+
+            if (result.status === 'success') {
+                msgEl.style.color = 'green';
+                msgEl.textContent = result.message;
+            } else {
+                msgEl.style.color = 'red';
+                msgEl.textContent = result.message || 'Reservation failed.';
+            }
+        });
+    </script>
+</body>
+</html>
